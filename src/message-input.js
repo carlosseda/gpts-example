@@ -3,6 +3,12 @@ class MessageInput extends HTMLElement {
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
+    this.newChat = true;
+
+    document.addEventListener('newChat', (event) => {
+      this.newChat = true;
+      this.shadow.querySelector('textarea').value = '';
+    })
   }
 
   connectedCallback () {
@@ -53,6 +59,7 @@ class MessageInput extends HTMLElement {
           background-color: hsl(235, 11%, 23%);
           border: none;
           color: hsl(0, 0%, 100%);
+          display: flex;
           font-family: 'SoehneBuch', Arial;
           font-size: 0.9rem;
           height: 1.2rem;
@@ -159,7 +166,8 @@ class MessageInput extends HTMLElement {
       this.sendButtonState(prompt)
     })
 
-    sendButton.addEventListener('click', () => {
+    sendButton.addEventListener('click', (event) => {
+      event.preventDefault()
       this.sendPrompt(prompt.value)
     })
   }
@@ -175,11 +183,19 @@ class MessageInput extends HTMLElement {
   }
 
   sendPrompt (prompt) {
+
+    this.shadow.querySelector('textarea').value = '';
+    
     document.dispatchEvent(new CustomEvent('newPrompt', {
       detail: {
-        prompt
+        prompt: prompt,
       }
     }))
+
+    if(this.newChat){
+      this.newChat = false;
+      document.dispatchEvent(new CustomEvent('startChat'))
+    }
   }
 }
 

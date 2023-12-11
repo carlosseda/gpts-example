@@ -3,6 +3,14 @@ class Examples extends HTMLElement {
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
+
+    document.addEventListener('newChat', (event) => {
+      this.render()
+    })
+
+    document.addEventListener('startChat', (event) => {
+      this.startChat()
+    })
   }
 
   connectedCallback () {
@@ -181,6 +189,10 @@ class Examples extends HTMLElement {
         </article>
       </section>
     `
+  }
+
+  startChat () {
+    this.shadow.innerHTML = ''
   }
 }
 

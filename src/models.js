@@ -123,6 +123,10 @@ class Models extends HTMLElement {
       </div>
     </section>
     `
+
+    this.shadow.querySelector('.model').addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('newChat', { detail: { model: 'chatgpt' } }))
+    })
   }
 }
 
