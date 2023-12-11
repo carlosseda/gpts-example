@@ -4,7 +4,7 @@ class Conversation extends HTMLElement {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
 
-    document.addEventListener('newPrompt', (e) => {
+    document.addEventListener('newPrompt', (event) => {
       
     })
   }
