@@ -4,17 +4,20 @@ class Examples extends HTMLElement {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
 
-    document.addEventListener('newChat', (event) => {
-      this.render()
-    })
-
-    document.addEventListener('startChat', (event) => {
-      this.startChat()
-    })
+    document.addEventListener('newChat', this.handleNewChat.bind(this))
+    document.addEventListener('startChat', this.handleStartChat.bind(this))
   }
 
   connectedCallback () {
     this.render()
+  }
+
+  handleNewChat = event => {
+    this.render()
+  }
+
+  handleStartChat = event => {
+    this.shadow.innerHTML = ''
   }
 
   render () {
@@ -40,6 +43,7 @@ class Examples extends HTMLElement {
           flex-direction: column;
           gap: 0.2rem;
           justify-content: center;
+          overflow: hidden;
           padding: 1rem;
           position: relative;
         }
@@ -132,6 +136,12 @@ class Examples extends HTMLElement {
           opacity: 1;
           visibility: visible;
         }
+
+        @media (max-width: 800px) {
+          .examples{
+            grid-template-columns: repeat(1, 1fr);
+          }
+        }
       </style>
     
       <section class="examples">
@@ -189,10 +199,6 @@ class Examples extends HTMLElement {
         </article>
       </section>
     `
-  }
-
-  startChat () {
-    this.shadow.innerHTML = ''
   }
 }
 

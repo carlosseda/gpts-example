@@ -5,14 +5,16 @@ class MessageInput extends HTMLElement {
     this.shadow = this.attachShadow({ mode: 'open' })
     this.newChat = true;
 
-    document.addEventListener('newChat', (event) => {
-      this.newChat = true;
-      this.shadow.querySelector('textarea').value = '';
-    })
+    document.addEventListener('newChat', this.handleNewChat.bind(this))
   }
 
   connectedCallback () {
     this.render()
+  }
+
+  handleNewChat = event => {
+    this.newChat = true;
+    this.render();
   }
 
   render () {
@@ -87,12 +89,12 @@ class MessageInput extends HTMLElement {
         }
 
         .message-input .send-button svg{
-          color:hsl(0, 0%, 0%, 0.3);
+          color: hsl(0, 0%, 0%, 0.3);
           width: 1.3rem;
         }
 
         .message-input .send-button.active button{
-          background-color: rgb(255, 255, 255);
+          background-color: hsl(240, 8%, 80%);
           cursor: pointer;
         }
 
@@ -184,7 +186,7 @@ class MessageInput extends HTMLElement {
 
   sendPrompt (prompt) {
 
-    this.shadow.querySelector('textarea').value = '';
+    this.render();
     
     document.dispatchEvent(new CustomEvent('newPrompt', {
       detail: {

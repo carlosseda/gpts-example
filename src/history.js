@@ -53,6 +53,7 @@ class History extends HTMLElement {
         font-family: 'SoehneBuch', sans-serif; 
         font-size: 0.7rem;
         text-transform: capitalize;
+        white-space: nowrap;
       }
 
       .history-record-messages ul{

@@ -3,18 +3,30 @@ class Chat extends HTMLElement {
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
+    this.model = "ChatGPT";
 
-    document.addEventListener('newChat', (event) => {
-      this.render()
-    })
-
-    document.addEventListener('startChat', (event) => {
-      this.startChat()
-    })
+    document.addEventListener('newChat', this.handleNewChat.bind(this))
+    document.addEventListener('startChat', this.handleStartChat.bind(this))
+    document.addEventListener('newPrompt', this.handleNewPrompt.bind(this))
   }
 
   connectedCallback () {
     this.render()
+  }
+
+  handleNewChat = event => {
+    this.model = event.detail.model;
+    this.render()
+  }
+
+  handleStartChat = event => {
+    this.shadow.querySelector('.chat').classList.add('active');
+    this.shadow.querySelector('.welcome').remove();
+  }
+
+  handleNewPrompt = event => {
+    this.createUserMessage(event);
+    this.createModelResponse(event);
   }
 
   render () {
@@ -31,12 +43,20 @@ class Chat extends HTMLElement {
           display: flex;
           flex-direction: column;
           justify-content: center;
-          min-height: 75vh;
+          min-height: 74vh;
         }
 
         .chat.active{
+          align-items: flex-start;
+          gap: 3rem;
+          justify-content: flex-start;
           min-height: 90vh;
-          max-height: 90vh
+          max-height: 90vh;
+          padding: 0 1rem;
+        }
+
+        .chat .prompt:first-child{
+          margin-top: 5rem;
         }
 
         .welcome{
@@ -70,6 +90,75 @@ class Chat extends HTMLElement {
           font-size: 1.5rem;
           margin: 0;
         }
+
+        .prompt{ 
+          display: flex;
+          gap: 1rem;
+        }
+
+        .message{
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .message h3{
+          color: hsl(0, 0%, 100%);
+          font-family: "SoehneBuch", sans-serif;
+          font-size: 0.9rem;
+          margin: 0;
+        }
+
+        .message p{
+          color: hsl(0, 0%, 100%);
+          font-family: "SoehneBuch", sans-serif;
+          font-size: 1rem;
+          margin: 0;
+        }
+
+        .message p .state{
+          background-color: hsl(0, 0%, 100%);
+          border-radius: 50%;
+          height: 1rem;
+          width: 1rem;
+        }
+
+        .message p .state.active{
+          animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: scale(0.8);
+          }
+          50% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(0.8);
+          }
+        }
+
+        .avatar{
+          align-items: center;
+          border: 1px solid hsl(0, 0%, 40%);
+          border-radius: 50%;
+          display: flex;
+          height: 1.5rem;
+          justify-content: center;
+          overflow: hidden;
+          width: 1.5rem;
+        }
+
+        .avatar img{
+          width: 100%;
+        }
+
+        @media (max-width: 800px) {
+          .chat{
+            min-height: 55vh;
+          }
+        }
       </style>
   
       <section class="chat">
@@ -85,9 +174,61 @@ class Chat extends HTMLElement {
     `
   }
 
-  startChat(){
-    this.shadow.querySelector('.chat').classList.add('active');
-    this.shadow.querySelector('.welcome').remove();
+  createUserMessage = event => {
+    const promptContainer = document.createElement('div');
+    const avatarContainer = document.createElement('div');
+    const messageContainer = document.createElement('div');
+
+    const userAvatar = document.createElement('img');
+    const userName = document.createElement('h3');
+    const prompt = document.createElement('p');
+
+    promptContainer.classList.add('prompt');
+    avatarContainer.classList.add('avatar');
+    messageContainer.classList.add('message');
+
+    userAvatar.src = "images/user-avatar.png";
+    userName.textContent = "Tú";
+    prompt.textContent = event.detail.prompt;
+
+    avatarContainer.appendChild(userAvatar);
+    messageContainer.appendChild(userName);
+    messageContainer.appendChild(prompt);
+
+    promptContainer.appendChild(avatarContainer);
+    promptContainer.appendChild(messageContainer);
+
+    this.shadow.querySelector('.chat').appendChild(promptContainer);
+  }
+
+  createModelResponse = event => {
+    const promptContainer = document.createElement('div');
+    const avatarContainer = document.createElement('div');
+    const messageContainer = document.createElement('div');
+
+    const modelAvatar = document.createElement('img');
+    const modelName = document.createElement('h3');
+    const prompt = document.createElement('p');
+    const messageState = document.createElement('div');
+
+    promptContainer.classList.add('prompt');
+    avatarContainer.classList.add('avatar');
+    messageContainer.classList.add('message');
+    messageState.classList.add('state');
+    messageState.classList.add('active');
+
+    modelAvatar.src = "images/user-avatar.png";
+    modelName.textContent = this.model;
+
+    avatarContainer.appendChild(modelAvatar);
+    messageContainer.appendChild(modelName);
+    messageContainer.appendChild(prompt);
+    prompt.appendChild(messageState);
+
+    promptContainer.appendChild(avatarContainer);
+    promptContainer.appendChild(messageContainer);
+
+    this.shadow.querySelector('.chat').appendChild(promptContainer);
   }
 }
 
