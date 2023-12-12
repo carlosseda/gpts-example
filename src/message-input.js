@@ -163,15 +163,27 @@ class MessageInput extends HTMLElement {
 
     const prompt = this.shadow.querySelector('textarea');
     const sendButton = this.shadow.querySelector('.send-button');
+    prompt.focus();
 
     prompt.addEventListener('input', () => {
       this.sendButtonState(prompt)
+    })
+
+    // Si le doy a enter, envía el mensaje
+
+    prompt.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        this.sendPrompt(prompt.value)
+      }
     })
 
     sendButton.addEventListener('click', (event) => {
       event.preventDefault()
       this.sendPrompt(prompt.value)
     })
+
+
   }
 
   sendButtonState (prompt) {

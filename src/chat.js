@@ -229,6 +229,22 @@ class Chat extends HTMLElement {
     promptContainer.appendChild(messageContainer);
 
     this.shadow.querySelector('.chat').appendChild(promptContainer);
+
+    setTimeout(() => {
+
+      messageState.classList.remove('active');
+
+      const response  = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum."
+
+      //Añdir cada caracter del mensaje de respuesta uno por uno, con un delay de 50ms
+      for (let i = 0; i < response.length; i++) {
+        setTimeout(() => {
+          prompt.textContent += response[i];
+        }, i * 50);
+      }
+
+
+    }, 5000);
   }
 }
 

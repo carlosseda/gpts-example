@@ -32,7 +32,7 @@ class Examples extends HTMLElement {
         
         .examples{
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
           gap: 0.5rem;
         }
 
@@ -43,7 +43,6 @@ class Examples extends HTMLElement {
           flex-direction: column;
           gap: 0.2rem;
           justify-content: center;
-          overflow: hidden;
           padding: 1rem;
           position: relative;
         }
@@ -64,7 +63,7 @@ class Examples extends HTMLElement {
         .example-description p{
           color: hsl(0, 0%, 100%);
           font-family: 'SoehneBuch', Arial;
-          font-size: 0.75em;
+          font-size: 0.9em;
           margin: 0;
           opacity: 0.5;
           overflow: hidden;
@@ -145,7 +144,7 @@ class Examples extends HTMLElement {
       </style>
     
       <section class="examples">
-        <article class="example">
+        <article class="example" data-prompt="Este es un ejemplo de prompt">
           <div class="example-title">
             <h2>Comparar principios del diseño</h2>
           </div>
@@ -158,7 +157,7 @@ class Examples extends HTMLElement {
               <span class="tooltiptext">Haz click para enviar</span>         
           </div>
         </article>
-        <article class="example">
+        <article class="example" data-prompt="Este es un ejemplo de prompt">
           <div class="example-title">
             <h2>Comparar técnicas de narración</h2>
           </div>
@@ -171,7 +170,7 @@ class Examples extends HTMLElement {
               <span class="tooltiptext">Haz click para enviar</span>                   
           </div>
         </article>
-        <article class="example">
+        <article class="example" data-prompt="Este es un ejemplo de prompt">
           <div class="example-title">
             <h2>Generar nombres</h2>
           </div>
@@ -184,7 +183,7 @@ class Examples extends HTMLElement {
               <span class="tooltiptext">Haz click para enviar</span>                  
           </div>
         </article>
-        <article class="example">
+        <article class="example" data-prompt="Este es un ejemplo de prompt">
           <div class="example-title">
             <h2>Sugiere conceptos</h2>
           </div>
@@ -199,6 +198,19 @@ class Examples extends HTMLElement {
         </article>
       </section>
     `
+
+    const examples = this.shadow.querySelector('.examples');
+
+    examples.addEventListener('click', (event) => {
+      if (event.target.closest('.example')) {
+        const prompt = event.target.closest('.example').dataset.prompt
+
+        document.dispatchEvent(new CustomEvent('startChat'))
+        document.dispatchEvent(new CustomEvent('newPrompt', { detail: {
+          prompt: prompt
+        }}))
+      }
+    })
   }
 }
 
