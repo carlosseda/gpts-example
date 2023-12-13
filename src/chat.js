@@ -4,10 +4,12 @@ class Chat extends HTMLElement {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
     this.model = "ChatGPT";
+    this.scroll = false;
 
     document.addEventListener('newChat', this.handleNewChat.bind(this))
     document.addEventListener('startChat', this.handleStartChat.bind(this))
     document.addEventListener('newPrompt', this.handleNewPrompt.bind(this))
+    document.addEventListener('stopModelResponse', this.handleStopModelResponse.bind(this))
   }
 
   connectedCallback () {
@@ -28,6 +30,10 @@ class Chat extends HTMLElement {
     this.createUserMessage(event);
     this.createModelResponse(event);
     this.shadow.querySelector('.chat').scrollTo(0, this.shadow.querySelector('.chat').scrollHeight);
+  }
+
+  handleStopModelResponse = event => {
+    
   }
 
   render () {
@@ -214,6 +220,14 @@ class Chat extends HTMLElement {
         </article>
       </section>
     `
+
+    this.shadow.querySelector('.chat').addEventListener('scroll', event => {
+      if (this.shadow.querySelector('.chat').scrollTop + this.shadow.querySelector('.chat').clientHeight >= this.shadow.querySelector('.chat').scrollHeight) {
+        this.scroll = false;
+      } else {
+        this.scroll = true;
+      }
+    });
   }
 
   createUserMessage = event => {
@@ -244,6 +258,7 @@ class Chat extends HTMLElement {
   }
 
   createModelResponse = event => {
+
     const promptContainer = document.createElement('div');
     const avatarContainer = document.createElement('div');
     const messageContainer = document.createElement('div');
@@ -251,13 +266,13 @@ class Chat extends HTMLElement {
     const modelAvatar = document.createElement('img');
     const modelName = document.createElement('h3');
     const prompt = document.createElement('p');
-    const messageState = document.createElement('div');
+    const waitState = document.createElement('div');
 
     promptContainer.classList.add('prompt');
     avatarContainer.classList.add('avatar');
     messageContainer.classList.add('message');
-    messageState.classList.add('state');
-    messageState.classList.add('active');
+    waitState.classList.add('state');
+    waitState.classList.add('active');
 
     modelAvatar.src = "images/user-avatar.png";
     modelName.textContent = this.model;
@@ -274,16 +289,32 @@ class Chat extends HTMLElement {
 
     setTimeout(() => {
 
-      messageState.classList.remove('active');
+      waitState.classList.remove('active');
+
+      document.dispatchEvent(new CustomEvent('responseState'), {
+        detail: {
+          responseState: true,
+        }
+      })
 
       const response  = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum."
 
       for (let i = 0; i < response.length; i++) {
+
         setTimeout(() => {
           prompt.textContent += response[i];
-          this.shadow.querySelector('.chat').scrollTo(0, this.shadow.querySelector('.chat').scrollHeight);
+
+          if(!this.scroll ){
+            this.shadow.querySelector('.chat').scrollTo(0, this.shadow.querySelector('.chat').scrollHeight);
+          }
         }, i * 50);
       }
+
+      document.dispatchEvent(new CustomEvent('responseState'), {
+        detail: {
+          responseState: false,
+        }
+      })
 
     }, 100);
   }

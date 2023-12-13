@@ -4,8 +4,10 @@ class MessageInput extends HTMLElement {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
     this.newChat = true;
+    this.responseState = true;
 
     document.addEventListener('newChat', this.handleNewChat.bind(this))
+    document.addEventListener('responseState', this.handleResponseState.bind(this))
   }
 
   connectedCallback () {
@@ -14,6 +16,11 @@ class MessageInput extends HTMLElement {
 
   handleNewChat = event => {
     this.newChat = true;
+    this.render();
+  }
+
+  handleResponseState = event => {
+    this.responseState = event.detail.responseState;
     this.render();
   }
 
@@ -134,6 +141,28 @@ class MessageInput extends HTMLElement {
           opacity: 1;
           visibility: visible;
         }
+
+        .stop-button {
+          align-items: center;
+          background-color: transparent;
+          border: 0.1rem solid hsl(0, 0%, 100%);
+          border-radius: 50%;
+          display: flex;
+          height: 1rem;
+          justify-content: center;
+          padding: 0.3rem;
+          width: 1rem;
+        }
+
+        .stop-button button {
+          background-color: hsl(0, 0%, 100%);
+          border: none;
+          border-radius: 0;
+          cursor: pointer;
+          height: 0.75rem;
+          width: 0.25rem;
+        }
+
       </style>
     
       <section class="message-input">
@@ -149,20 +178,37 @@ class MessageInput extends HTMLElement {
           <div class="form-element">
             <textarea placeholder="Message ChatGPT..."></textarea>
           </div>
-          <div class="send-button">
-            <button disabled>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-white dark:text-black">
-                <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-              </svg>            
-              <span class="tooltiptext">Enviar mensaje</span>                  
-            </button>
+          <div class="interaction-button">
           </div>
         </form>
       </section>
     `
 
+    let button;
+
+    if(this.responseState){  
+      button = `
+        <div class="stop-button">
+          <button></button>
+        </div>`;
+    } else {
+      button = `
+        <div class="send-button">
+          <button disabled>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-white dark:text-black">
+              <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>            
+            <span class="tooltiptext">Enviar mensaje</span>                  
+          </button>
+        </div>`;
+    }
+
+    this.shadow.querySelector('.interaction-button').innerHTML = button;
+
     const prompt = this.shadow.querySelector('textarea');
-    const sendButton = this.shadow.querySelector('.send-button');
+    const sendButton = this.shadow.querySelector('.send-button button');
+    const stopButton = this.shadow.querySelector('.stop-button button');
+
     prompt.focus();
 
     prompt.addEventListener('input', () => {
@@ -179,6 +225,12 @@ class MessageInput extends HTMLElement {
     sendButton.addEventListener('click', (event) => {
       event.preventDefault()
       this.sendPrompt(prompt.value)
+    })
+
+    stopButton.addEventListener('click', (event) => {
+      event.preventDefault()
+      this.responseState = false;
+      document.dispatchEvent(new CustomEvent('stopModelResponse'))
     })
   }
 
