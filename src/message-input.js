@@ -169,10 +169,8 @@ class MessageInput extends HTMLElement {
       this.sendButtonState(prompt)
     })
 
-    // Si le doy a enter, envía el mensaje
-
     prompt.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
+      if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault()
         this.sendPrompt(prompt.value)
       }
@@ -182,8 +180,6 @@ class MessageInput extends HTMLElement {
       event.preventDefault()
       this.sendPrompt(prompt.value)
     })
-
-
   }
 
   sendButtonState (prompt) {

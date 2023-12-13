@@ -27,6 +27,7 @@ class Chat extends HTMLElement {
   handleNewPrompt = event => {
     this.createUserMessage(event);
     this.createModelResponse(event);
+    this.shadow.querySelector('.chat').scrollTo(0, this.shadow.querySelector('.chat').scrollHeight);
   }
 
   render () {
@@ -44,6 +45,7 @@ class Chat extends HTMLElement {
           flex-direction: column;
           justify-content: center;
           min-height: 74vh;
+          position: relative;
         }
 
         .chat.active{
@@ -52,11 +54,12 @@ class Chat extends HTMLElement {
           justify-content: flex-start;
           min-height: 90vh;
           max-height: 90vh;
+          overflow-y: scroll;
           padding: 0 1rem;
         }
 
-        .chat .prompt:first-child{
-          margin-top: 5rem;
+        .chat.active::-webkit-scrollbar {
+          display: none;
         }
 
         .welcome{
@@ -94,6 +97,14 @@ class Chat extends HTMLElement {
         .prompt{ 
           display: flex;
           gap: 1rem;
+        }
+
+        .prompt:first-child{
+          margin-top: 5rem;
+        }
+
+        .prompt:last-child{
+          margin-bottom: 3rem;
         }
 
         .message{
@@ -146,12 +157,43 @@ class Chat extends HTMLElement {
           display: flex;
           height: 1.5rem;
           justify-content: center;
+          min-width: 1.5rem;
           overflow: hidden;
           width: 1.5rem;
         }
 
         .avatar img{
           width: 100%;
+        }
+
+        .to-bottom{
+          align-items: center;
+          background-color: hsl(235, 7%, 31%, 0.5);
+          border-radius: 50%;
+          bottom: 1rem;
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          height: 2rem;
+          left: calc(50% - 1rem);
+          padding: 0.2rem;
+          position: absolute;
+          visibility: hidden;
+          width: 2rem;
+          z-index: 1000;
+        }
+
+        .to-bottom.active{
+          visibility: visible;
+        }
+
+        .to-bottom svg{
+          height: 1.5rem;
+          width: 1.5rem;
+        }
+
+        .to-bottom svg path{
+          fill: hsl(0, 0%, 100%);
         }
 
         @media (max-width: 800px) {
@@ -236,15 +278,14 @@ class Chat extends HTMLElement {
 
       const response  = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum."
 
-      //Añdir cada caracter del mensaje de respuesta uno por uno, con un delay de 50ms
       for (let i = 0; i < response.length; i++) {
         setTimeout(() => {
           prompt.textContent += response[i];
+          this.shadow.querySelector('.chat').scrollTo(0, this.shadow.querySelector('.chat').scrollHeight);
         }, i * 50);
       }
 
-
-    }, 5000);
+    }, 100);
   }
 }
 
