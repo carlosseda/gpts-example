@@ -33,7 +33,7 @@ module.exports = function (sequelize, DataTypes) {
       }
     },
     prompt: {
-      type: DataTypes.Example,
+      type: DataTypes.TEXT,
       allowNull: false,
       validate: {
         notNull: {

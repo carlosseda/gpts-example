@@ -3,7 +3,8 @@ module.exports = (app, upload) => {
   const authJwt = require('../middlewares/auth-jwt.js')
   const controller = require('../controllers/client/example-controller.js')
 
-  router.get('/', [authJwt.verifyUserToken], controller.findAll)
+  // router.get('/', [authJwt.verifyUserToken], controller.findAll)
+  router.get('/', controller.findAll)
 
   app.use('/api/client/examples', router)
 }

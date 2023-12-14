@@ -136,6 +136,7 @@ class Models extends HTMLElement {
       const assistantElement = document.createElement('div')
       assistantElement.classList.add('assistant')
       assistantElement.dataset.assistant = assistant.assistant
+      assistantElement.dataset.assistantId = assistant.id
 
       const assistantIcon = document.createElement('div')
       assistantIcon.classList.add('assistant-icon')
@@ -161,12 +162,20 @@ class Models extends HTMLElement {
       assistantElement.appendChild(assistantName)
       assistantElement.appendChild(assistantStart)
       assistants.appendChild(assistantElement)
+
+      if(assistant.default ){
+        sessionStorage.setItem('assistantId', assistant.id)
+      }
     });
 
     this.shadow.querySelector('.assistants').addEventListener('click', (event) => {
+
       if (event.target.closest('.assistant')){
+
         const assistant = event.target.closest('.assistant')
-        document.dispatchEvent(new CustomEvent('newChat', { detail: { assistant: assistant.dataset.assistant } }))
+
+        sessionStorage.setItem('assistantId', assistant.datase.assistantId)
+        document.dispatchEvent(new CustomEvent('newChat'))
       }
     })
   }

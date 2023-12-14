@@ -1,4 +1,6 @@
-class MessageInput extends HTMLElement {
+import { API_URL } from '../config/config.js'
+
+class PromptInput extends HTMLElement {
 
   constructor () {
     super()
@@ -48,7 +50,7 @@ class MessageInput extends HTMLElement {
           width: 100%;
         }
 
-        .message-input{
+        .prompt-input{
           width: 100%;
         }
 
@@ -191,7 +193,7 @@ class MessageInput extends HTMLElement {
 
       </style>
     
-      <section class="message-input">
+      <section class="prompt-input">
         <form>
           <div class="attach-button">
             <button>
@@ -202,7 +204,7 @@ class MessageInput extends HTMLElement {
             </button>
           </div>
           <div class="form-element">
-            <textarea placeholder="Message ChatGPT..."></textarea>
+            <textarea placeholder="Escriba aquí su mensaje..."></textarea>
           </div>
           <div class="interaction-button">
             <div class="stop-button">
@@ -268,21 +270,61 @@ class MessageInput extends HTMLElement {
     }
   }
 
-  sendPrompt (prompt) {
+  async sendPrompt (prompt) {
 
     this.render();
-    
+
     document.dispatchEvent(new CustomEvent('newPrompt', {
       detail: {
         prompt: prompt,
       }
     }))
 
-    if(this.newChat){
-      this.newChat = false;
-      document.dispatchEvent(new CustomEvent('startChat'))
+    const url = `${API_URL}/client/prompts`
+   
+    const data = {
+      prompt: prompt,
+      customerId: sessionStorage.getItem('customerId'),
+      assistantId: sessionStorage.getItem('assistantId')
     }
+
+    console.log(data)
+
+    try {
+      const result = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+
+      const response = await result.json()
+
+      document.dispatchEvent(new CustomEvent('newAnswer', {
+        detail: {
+          answer: response.answer
+        }
+      }))
+
+      if(this.newChat){
+
+        this.newChat = false;
+
+        document.dispatchEvent(new CustomEvent('startChat'))
+
+        document.dispatchEvent(new CustomEvent('updateHistory', {
+          detail: {
+            history: response.chat
+          }
+        }))
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
+    
   }
 }
 
-customElements.define('message-input-component', MessageInput);
+customElements.define('prompt-input-component', PromptInput);

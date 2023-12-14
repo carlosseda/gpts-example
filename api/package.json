@@ -9,6 +9,7 @@
     "resource-generator": "node src/utils/resource-generator.js"
   },
   "dependencies": {
+    "@img/sharp-win32-x64": "^0.33.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "deep-email-validator": "^0.1.21",

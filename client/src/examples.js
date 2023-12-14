@@ -1,15 +1,18 @@
+import { API_URL } from '../config/config.js'
+
 class Examples extends HTMLElement {
 
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
+    this.data = []
 
     document.addEventListener('newChat', this.handleNewChat.bind(this))
     document.addEventListener('startChat', this.handleStartChat.bind(this))
   }
 
   connectedCallback () {
-    this.render()
+    this.loadData().then(() => this.render())
   }
 
   handleNewChat = event => {
@@ -18,6 +21,23 @@ class Examples extends HTMLElement {
 
   handleStartChat = event => {
     this.shadow.innerHTML = ''
+  }
+
+  async loadData () {
+    const url = `${API_URL}/client/examples`
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          // Authorization: 'Bearer ' + sessionStorage.getItem('accessToken')
+        }
+      })
+
+      this.data = await response.json()
+
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   render () {
@@ -144,63 +164,49 @@ class Examples extends HTMLElement {
         }
       </style>
     
-      <section class="examples">
-        <article class="example" data-prompt="Este es un ejemplo de prompt">
-          <div class="example-title">
-            <h2>Comparar principios del diseño</h2>
-          </div>
-          <div class="example-description">
-            <p>para convertir una fecha al día de la semana correspo...</p>
-          </div>
-          <div class="example-send">
-            <div class="example-send-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z" /></svg>  
-              <span class="tooltiptext">Haz click para enviar</span>         
-          </div>
-        </article>
-        <article class="example" data-prompt="Este es un ejemplo de prompt">
-          <div class="example-title">
-            <h2>Comparar técnicas de narración</h2>
-          </div>
-          <div class="example-description">
-            <p>en novelas y en películas</p>
-          </div>
-          <div class="example-send">
-            <div class="example-send-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z" /></svg> 
-              <span class="tooltiptext">Haz click para enviar</span>                   
-          </div>
-        </article>
-        <article class="example" data-prompt="Este es un ejemplo de prompt">
-          <div class="example-title">
-            <h2>Generar nombres</h2>
-          </div>
-          <div class="example-description">
-            <p>para mi equipo de fútbol de fantasía con un tema de rasputin</p>
-          </div>
-          <div class="example-send">
-            <div class="example-send-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z" /></svg>  
-              <span class="tooltiptext">Haz click para enviar</span>                  
-          </div>
-        </article>
-        <article class="example" data-prompt="Este es un ejemplo de prompt">
-          <div class="example-title">
-            <h2>Sugiere conceptos</h2>
-          </div>
-          <div class="example-description">
-            <p>para un juego de arcade de estilo retro</p>
-          </div>
-          <div class="example-send">
-            <div class="example-send-button">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z" /></svg>  
-              <span class="tooltiptext">Haz click para enviar</span>                  
-          </div>
-        </article>
-      </section>
+      <section class="examples"></section>
     `
 
     const examples = this.shadow.querySelector('.examples');
+
+    this.data.forEach(example => {
+      const exampleElement = document.createElement('article')
+      exampleElement.classList.add('example')
+      exampleElement.dataset.prompt = example.prompt
+
+      const exampleTitle = document.createElement('div')
+      exampleTitle.classList.add('example-title')
+
+      const exampleTitleH2 = document.createElement('h2')
+      exampleTitleH2.textContent = example.title
+
+      const exampleDescription = document.createElement('div')
+      exampleDescription.classList.add('example-description')
+
+      const exampleDescriptionP = document.createElement('p')
+      exampleDescriptionP.textContent = example.description
+
+      const exampleSend = document.createElement('div')
+      exampleSend.classList.add('example-send')
+
+      const exampleSendButton = document.createElement('div')
+      exampleSendButton.classList.add('example-send-button')
+
+      const exampleSendButtonTooltip = document.createElement('span')
+      exampleSendButtonTooltip.classList.add('tooltiptext')
+      exampleSendButtonTooltip.textContent = 'Haz click para enviar'
+
+      exampleSendButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92,12.08L18.5,13.5L13,8V20Z" /></svg>`
+
+      exampleSendButton.appendChild(exampleSendButtonTooltip)
+      exampleSend.appendChild(exampleSendButton)
+      exampleTitle.appendChild(exampleTitleH2)
+      exampleDescription.appendChild(exampleDescriptionP)
+      exampleElement.appendChild(exampleTitle)
+      exampleElement.appendChild(exampleDescription)
+      exampleElement.appendChild(exampleSend)
+      examples.appendChild(exampleElement)
+    })
 
     examples.addEventListener('click', (event) => {
       if (event.target.closest('.example')) {

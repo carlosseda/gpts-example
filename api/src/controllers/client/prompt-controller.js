@@ -5,8 +5,9 @@ const Op = db.Sequelize.Op
 
 exports.create = async (req, res) => {
   try {
-    const data = await Customer.create(req.body)
-    res.status(200).send(data)
+    console.log(req.body)
+    // const data = await Customer.create(req.body)
+    // res.status(200).send(data)
   } catch (error) {
     res.status(500).send({
       message: error.message || 'Algún error ha surgido al insertar el dato.',

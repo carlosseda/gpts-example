@@ -263,7 +263,7 @@ class Chat extends HTMLElement {
     this.shadow.querySelector('.chat').appendChild(promptContainer);
   }
 
-  createModelResponse = event => {
+  createModelResponse = async event => {
 
     const promptContainer = document.createElement('div');
     const avatarContainer = document.createElement('div');

@@ -6,6 +6,7 @@ class User extends HTMLElement {
   }
 
   connectedCallback () {
+    sessionStorage.setItem('customerId', '1')
     this.render()
   }
 
