@@ -5,6 +5,7 @@ class Chat extends HTMLElement {
     this.shadow = this.attachShadow({ mode: 'open' })
     this.model = "ChatGPT";
     this.scroll = false;
+    this.stopWriting = false;
 
     document.addEventListener('newChat', this.handleNewChat.bind(this))
     document.addEventListener('startChat', this.handleStartChat.bind(this))
@@ -17,7 +18,11 @@ class Chat extends HTMLElement {
   }
 
   handleNewChat = event => {
-    this.model = event.detail.model;
+
+    if(event.detail){
+      this.model = event.detail.model;
+    }
+
     this.render()
   }
 
@@ -33,7 +38,7 @@ class Chat extends HTMLElement {
   }
 
   handleStopModelResponse = event => {
-    
+    this.stopWriting = true;
   }
 
   render () {
@@ -242,6 +247,7 @@ class Chat extends HTMLElement {
     promptContainer.classList.add('prompt');
     avatarContainer.classList.add('avatar');
     messageContainer.classList.add('message');
+    messageContainer.classList.add('user');
 
     userAvatar.src = "images/user-avatar.png";
     userName.textContent = "Tú";
@@ -271,6 +277,7 @@ class Chat extends HTMLElement {
     promptContainer.classList.add('prompt');
     avatarContainer.classList.add('avatar');
     messageContainer.classList.add('message');
+    messageContainer.classList.add('model');
     waitState.classList.add('state');
     waitState.classList.add('active');
 
@@ -280,8 +287,8 @@ class Chat extends HTMLElement {
     avatarContainer.appendChild(modelAvatar);
     messageContainer.appendChild(modelName);
     messageContainer.appendChild(prompt);
-    prompt.appendChild(messageState);
 
+    promptContainer.appendChild(messageContainer);
     promptContainer.appendChild(avatarContainer);
     promptContainer.appendChild(messageContainer);
 
@@ -290,16 +297,21 @@ class Chat extends HTMLElement {
     setTimeout(() => {
 
       waitState.classList.remove('active');
-
-      document.dispatchEvent(new CustomEvent('responseState'), {
+      
+      document.dispatchEvent(new CustomEvent('responseState', {
         detail: {
           responseState: true,
         }
-      })
+      }))
 
       const response  = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum."
 
       for (let i = 0; i < response.length; i++) {
+
+        if(this.stopWriting){
+          this.stopWriting = false;
+          break;
+        }
 
         setTimeout(() => {
           prompt.textContent += response[i];
@@ -309,14 +321,13 @@ class Chat extends HTMLElement {
           }
         }, i * 50);
       }
-
-      document.dispatchEvent(new CustomEvent('responseState'), {
-        detail: {
-          responseState: false,
-        }
-      })
-
     }, 100);
+
+    document.dispatchEvent(new CustomEvent('responseState', {
+      detail: {
+        responseState: false,
+      }
+    }))
   }
 }
 

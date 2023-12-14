@@ -4,14 +4,29 @@ class MessageInput extends HTMLElement {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
     this.newChat = true;
-    this.responseState = true;
 
     document.addEventListener('newChat', this.handleNewChat.bind(this))
     document.addEventListener('responseState', this.handleResponseState.bind(this))
   }
 
+  static get observedAttributes() {
+    return ['response-state'];
+  }
+
   connectedCallback () {
     this.render()
+  }
+
+  attributeChangedCallback (name, oldValue, newValue) {
+    if(name === 'response-state'){
+      if(newValue === "true"){
+        this.shadow.querySelector('.send-button').classList.remove('visible');
+        this.shadow.querySelector('.stop-button').classList.add('visible');
+      }else{
+        this.shadow.querySelector('.send-button').classList.add('visible');
+        this.shadow.querySelector('.stop-button').classList.remove('visible');
+      }
+    }
   }
 
   handleNewChat = event => {
@@ -20,8 +35,7 @@ class MessageInput extends HTMLElement {
   }
 
   handleResponseState = event => {
-    this.responseState = event.detail.responseState;
-    this.render();
+    this.setAttribute('response-state', event.detail.responseState);
   }
 
   render () {
@@ -38,19 +52,19 @@ class MessageInput extends HTMLElement {
           width: 100%;
         }
 
-        .message-input .attach-button button{
+        .attach-button button{
           background-color: hsl(0, 0%, 100%, 0);
           border: none;
           border-radius: 0.5rem;
           cursor: pointer;
         }
 
-        .message-input .attach-button svg{
+        .attach-button svg{
           color: hsl(0, 0%, 100%);
           width: 1.3rem;
         }
 
-        .message-input form{
+        form{
           align-items: center;
           border: 1px solid hsl(0, 0%, 40%);
           border-radius: 1rem;
@@ -59,12 +73,12 @@ class MessageInput extends HTMLElement {
           padding: 0.5rem;
         }
 
-        .message-input form .form-element{
+        .form-element{
           height: max-content;
           width: 90%
         }
 
-        .message-input form .form-element textarea{
+        .form-element textarea{
           background-color: hsl(235, 11%, 23%);
           border: none;
           color: hsl(0, 0%, 100%);
@@ -77,16 +91,24 @@ class MessageInput extends HTMLElement {
           width: 100%;
         }
 
-        .message-input form .form-element textarea::placeholder{
+        .form-element textarea::placeholder{
           color: hsl(0, 0%, 100%, 0.5);
           font-weight: 300;
         }
 
-        .message-input form .form-element textarea:focus{
+        .form-element textarea:focus{
           outline: none;
         }
 
-        .message-input .send-button button{
+        .send-button{
+          display: none;
+        }
+
+        .send-button.visible{
+          display: block;
+        }
+
+        .send-button button{
           align-items: center;
           background-color: hsl(235, 7%, 31%);
           border: none;
@@ -95,17 +117,17 @@ class MessageInput extends HTMLElement {
           padding: 0.1rem 0.2rem;
         }
 
-        .message-input .send-button svg{
+        .send-button svg{
           color: hsl(0, 0%, 0%, 0.3);
           width: 1.3rem;
         }
 
-        .message-input .send-button.active button{
+        .send-button.active button{
           background-color: hsl(240, 8%, 80%);
           cursor: pointer;
         }
 
-        .message-input .send-button.active svg{
+        .send-button.active svg{
           color:hsl(0, 0%, 0%);
         }
 
@@ -147,11 +169,15 @@ class MessageInput extends HTMLElement {
           background-color: transparent;
           border: 0.1rem solid hsl(0, 0%, 100%);
           border-radius: 50%;
-          display: flex;
+          display: none;
           height: 1rem;
           justify-content: center;
           padding: 0.3rem;
           width: 1rem;
+        }
+
+        .stop-button.visible {
+          display: flex;
         }
 
         .stop-button button {
@@ -179,31 +205,21 @@ class MessageInput extends HTMLElement {
             <textarea placeholder="Message ChatGPT..."></textarea>
           </div>
           <div class="interaction-button">
+            <div class="stop-button">
+              <button></button>
+            </div>
+            <div class="send-button visible">
+              <button disabled>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-white dark:text-black">
+                  <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>            
+                <span class="tooltiptext">Enviar mensaje</span>                  
+              </button>
+            </div>
           </div>
         </form>
       </section>
     `
-
-    let button;
-
-    if(this.responseState){  
-      button = `
-        <div class="stop-button">
-          <button></button>
-        </div>`;
-    } else {
-      button = `
-        <div class="send-button">
-          <button disabled>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-white dark:text-black">
-              <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>            
-            <span class="tooltiptext">Enviar mensaje</span>                  
-          </button>
-        </div>`;
-    }
-
-    this.shadow.querySelector('.interaction-button').innerHTML = button;
 
     const prompt = this.shadow.querySelector('textarea');
     const sendButton = this.shadow.querySelector('.send-button button');
@@ -229,16 +245,24 @@ class MessageInput extends HTMLElement {
 
     stopButton.addEventListener('click', (event) => {
       event.preventDefault()
-      this.responseState = false;
+      this.setAttribute('response-state', "false");
       document.dispatchEvent(new CustomEvent('stopModelResponse'))
     })
   }
 
   sendButtonState (prompt) {
+
     if (prompt.value.length > 0) {
+
+      if(this.shadow.querySelector('.stop-button').classList.contains('visible')){
+        return;
+      }
+
       this.shadow.querySelector('.send-button').classList.add('active')
       this.shadow.querySelector('.send-button button').disabled = false;
+
     } else {
+      
       this.shadow.querySelector('.send-button').classList.remove('active')
       this.shadow.querySelector('.send-button button').disabled = true;
     }
