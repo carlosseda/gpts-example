@@ -14,21 +14,21 @@ module.exports = function (sequelize, DataTypes) {
         key: 'id'
       }
     },
-    author: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Por favor, rellena el campo "Autor".'
-        }
-      }
-    },
     prompt: {
       type: DataTypes.TEXT,
       allowNull: false,
       validate: {
         notNull: {
           msg: 'Por favor, rellena el campo "Prompt".'
+        }
+      }
+    },
+    answer: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: 'Por favor, rellena el campo "Respuesta".'
         }
       }
     }

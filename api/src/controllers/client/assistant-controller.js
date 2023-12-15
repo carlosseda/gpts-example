@@ -1,4 +1,3 @@
-const OpenAI = require('../../utils/OpenAI')
 const db = require('../../models')
 const Assistant = db.Assistant
 

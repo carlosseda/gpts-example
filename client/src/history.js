@@ -1,12 +1,33 @@
+import { API_URL } from '../config/config.js'
+
 class History extends HTMLElement {
 
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
+    this.data = []
   }
 
   connectedCallback () {
-    this.render()
+    this.loadData().then(() => this.render())
+  }
+
+  async loadData () {
+      
+    const url = `${API_URL}/client/chats`
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          // Authorization: 'Bearer ' + sessionStorage.getItem('accessToken')
+        }
+      })
+
+      this.data = await response.json()
+
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   render () {
@@ -175,6 +196,10 @@ class History extends HTMLElement {
       </article>
     </section>
     `
+
+    this.data.forEach( chat => {
+
+    })
   }
 }
 

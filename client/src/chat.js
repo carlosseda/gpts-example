@@ -10,6 +10,7 @@ class Chat extends HTMLElement {
     document.addEventListener('newChat', this.handleNewChat.bind(this))
     document.addEventListener('startChat', this.handleStartChat.bind(this))
     document.addEventListener('newPrompt', this.handleNewPrompt.bind(this))
+    document.addEventListener('newAnswer', this.handleNewAnswer.bind(this))
     document.addEventListener('stopModelResponse', this.handleStopModelResponse.bind(this))
   }
 
@@ -24,6 +25,42 @@ class Chat extends HTMLElement {
     }
 
     this.render()
+  }
+
+  handleNewAnswer = event => {
+
+    document.dispatchEvent(new CustomEvent('responseState', {
+      detail: {
+        responseState: true,
+      }
+    }))
+
+    const textContainer = this.shadow.querySelector('.state').parentElement;
+    const response  = event.detail.answer
+
+    for (let i = 0; i < response.length; i++) {
+
+      if(this.stopWriting){
+        this.stopWriting = false;
+        break;
+      }
+
+      setTimeout(() => {
+
+        textContainer.textContent += response[i];
+
+        if(!this.scroll ){
+          this.shadow.querySelector('.chat').scrollTo(0, this.shadow.querySelector('.chat').scrollHeight);
+        }
+
+      }, i * 50);
+    }
+
+    document.dispatchEvent(new CustomEvent('responseState', {
+      detail: {
+        responseState: false,
+      }
+    }))
   }
 
   handleStartChat = event => {
@@ -284,6 +321,7 @@ class Chat extends HTMLElement {
     modelAvatar.src = "images/user-avatar.png";
     modelName.textContent = this.model;
 
+    prompt.appendChild(waitState);
     avatarContainer.appendChild(modelAvatar);
     messageContainer.appendChild(modelName);
     messageContainer.appendChild(prompt);
@@ -293,41 +331,6 @@ class Chat extends HTMLElement {
     promptContainer.appendChild(messageContainer);
 
     this.shadow.querySelector('.chat').appendChild(promptContainer);
-
-    setTimeout(() => {
-
-      waitState.classList.remove('active');
-      
-      document.dispatchEvent(new CustomEvent('responseState', {
-        detail: {
-          responseState: true,
-        }
-      }))
-
-      const response  = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum."
-
-      for (let i = 0; i < response.length; i++) {
-
-        if(this.stopWriting){
-          this.stopWriting = false;
-          break;
-        }
-
-        setTimeout(() => {
-          prompt.textContent += response[i];
-
-          if(!this.scroll ){
-            this.shadow.querySelector('.chat').scrollTo(0, this.shadow.querySelector('.chat').scrollHeight);
-          }
-        }, i * 50);
-      }
-    }, 100);
-
-    document.dispatchEvent(new CustomEvent('responseState', {
-      detail: {
-        responseState: false,
-      }
-    }))
   }
 }
 

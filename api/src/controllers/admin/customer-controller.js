@@ -1,4 +1,4 @@
-const OpenAI = require('../../utils/OpenAI')
+const OpenAI = require('../../services/openai-service')
 const db = require('../../models')
 const Customer = db.Customer
 const Op = db.Sequelize.Op

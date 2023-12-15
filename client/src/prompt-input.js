@@ -5,7 +5,7 @@ class PromptInput extends HTMLElement {
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
-    this.newChat = true;
+    this.chatId = null;
 
     document.addEventListener('newChat', this.handleNewChat.bind(this))
     document.addEventListener('responseState', this.handleResponseState.bind(this))
@@ -32,7 +32,7 @@ class PromptInput extends HTMLElement {
   }
 
   handleNewChat = event => {
-    this.newChat = true;
+    this.chatId = null;
     this.render();
   }
 
@@ -274,6 +274,10 @@ class PromptInput extends HTMLElement {
 
     this.render();
 
+    if(this.chatId === null){
+      document.dispatchEvent(new CustomEvent('startChat'))
+    }
+
     document.dispatchEvent(new CustomEvent('newPrompt', {
       detail: {
         prompt: prompt,
@@ -283,12 +287,12 @@ class PromptInput extends HTMLElement {
     const url = `${API_URL}/client/prompts`
    
     const data = {
+      chatId: this.chatId,
       prompt: prompt,
       customerId: sessionStorage.getItem('customerId'),
-      assistantId: sessionStorage.getItem('assistantId')
+      assistantId: sessionStorage.getItem('assistantId'),
+      assistant: sessionStorage.getItem('assistant')
     }
-
-    console.log(data)
 
     try {
       const result = await fetch(url, {
@@ -307,19 +311,18 @@ class PromptInput extends HTMLElement {
         }
       }))
 
-      if(this.newChat){
+      if(this.chatId === null){
 
-        this.newChat = false;
-
-        document.dispatchEvent(new CustomEvent('startChat'))
+        this.chatId = response.chatId;
 
         document.dispatchEvent(new CustomEvent('updateHistory', {
           detail: {
-            history: response.chat
+            resume: response.resume,
+            chatId: response.chatId
           }
         }))
       }
-      
+
     } catch (error) {
       console.log(error)
     }

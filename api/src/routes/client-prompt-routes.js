@@ -7,7 +7,7 @@ module.exports = (app, upload) => {
   // router.get('/', [authJwt.verifyUserToken], controller.findAll)
 
   router.post('/', controller.create)
-  router.get('/', controller.findAll)
+  router.get('/:chatId', controller.findAll)
 
   app.use('/api/client/prompts', router)
 }

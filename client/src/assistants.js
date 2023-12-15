@@ -165,6 +165,7 @@ class Models extends HTMLElement {
 
       if(assistant.default ){
         sessionStorage.setItem('assistantId', assistant.id)
+        sessionStorage.setItem('assistant', assistant.assistant)
       }
     });
 
@@ -174,7 +175,8 @@ class Models extends HTMLElement {
 
         const assistant = event.target.closest('.assistant')
 
-        sessionStorage.setItem('assistantId', assistant.datase.assistantId)
+        sessionStorage.setItem('assistantId', assistant.dataset.assistantId)
+        sessionStorage.setItem('assistant', assistant.dataset.assistant)
         document.dispatchEvent(new CustomEvent('newChat'))
       }
     })

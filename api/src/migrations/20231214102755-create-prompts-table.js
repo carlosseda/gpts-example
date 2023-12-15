@@ -17,11 +17,11 @@ module.exports = {
           key: 'id'
         }
       },
-      author: {
-        type: Sequelize.STRING,
+      prompt: {
+        type: Sequelize.TEXT,
         allowNull: false
       },
-      prompt: {
+      answer: {
         type: Sequelize.TEXT,
         allowNull: false
       },
