@@ -6,6 +6,7 @@ const db = require('../../models')
 const User = db.User
 
 exports.signin = (req, res) => {
+   
   User.findOne({
     where: {
       email: req.body.email
@@ -32,14 +33,17 @@ exports.signin = (req, res) => {
         expiresIn: 86400
       })
 
+      res.cookie('accessToken', token, { maxAge: 86400000, httpOnly: true });
+    
       res.status(200).send({
         id: user.id,
         name: user.name,
         email: user.email,
-        accessToken: token
+        accessToken: token,
+        redirection: '/admin/panel-de-control'
       })
     })
-    .catch(err => {
-      res.status(500).send({ message: err.message })
+    .catch(error => {
+      res.status(500).send({ message: error.message })
     })
 }
