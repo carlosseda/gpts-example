@@ -59,30 +59,12 @@ module.exports = function (sequelize, DataTypes) {
         }
       }
     },
-    town: {
-      type: DataTypes.STRING,
+    password: {
+      type: DataTypes.STRING(255),
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Por favor, rellena el campo "Localidad".'
-        }
-      }
-    },
-    postalCode: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Por favor, rellena el campo "Código Postal".'
-        }
-      }
-    },
-    address: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'Por favor, rellena el campo "Dirección".'
+          msg: 'Por favor, rellena el campo "password".'
         }
       }
     }
