@@ -3,9 +3,9 @@ class Chat extends HTMLElement {
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
-    this.model = "ChatGPT";
-    this.scroll = false;
-    this.stopWriting = false;
+    this.model = "ChatGPT"
+    this.scroll = false
+    this.stopWriting = false
 
     document.addEventListener('newChat', this.handleNewChat.bind(this))
     document.addEventListener('startChat', this.handleStartChat.bind(this))
@@ -21,7 +21,7 @@ class Chat extends HTMLElement {
   handleNewChat = event => {
 
     if(event.detail){
-      this.model = event.detail.model;
+      this.model = event.detail.model
     }
 
     this.render()
@@ -69,13 +69,13 @@ class Chat extends HTMLElement {
   }
 
   handleNewPrompt = event => {
-    this.createUserMessage(event);
-    this.createModelResponse(event);
+    this.createUserMessage(event)
+    this.createModelResponse(event)
     this.shadow.querySelector('.chat').scrollTo(0, this.shadow.querySelector('.chat').scrollHeight);
   }
 
   handleStopModelResponse = event => {
-    this.stopWriting = true;
+    this.stopWriting = true
   }
 
   render () {
@@ -273,65 +273,65 @@ class Chat extends HTMLElement {
   }
 
   createUserMessage = event => {
-    const promptContainer = document.createElement('div');
-    const avatarContainer = document.createElement('div');
-    const messageContainer = document.createElement('div');
+    const promptContainer = document.createElement('div')
+    const avatarContainer = document.createElement('div')
+    const messageContainer = document.createElement('div')
 
-    const userAvatar = document.createElement('img');
-    const userName = document.createElement('h3');
-    const prompt = document.createElement('p');
+    const userAvatar = document.createElement('img')
+    const userName = document.createElement('h3')
+    const prompt = document.createElement('p')
 
-    promptContainer.classList.add('prompt');
-    avatarContainer.classList.add('avatar');
-    messageContainer.classList.add('message');
-    messageContainer.classList.add('user');
+    promptContainer.classList.add('prompt')
+    avatarContainer.classList.add('avatar')
+    messageContainer.classList.add('message')
+    messageContainer.classList.add('user')
 
-    userAvatar.src = "images/user-avatar.png";
-    userName.textContent = "Tú";
-    prompt.textContent = event.detail.prompt;
+    userAvatar.src = "images/user-avatar.png"
+    userName.textContent = "Tú"
+    prompt.textContent = event.detail.prompt
 
-    avatarContainer.appendChild(userAvatar);
-    messageContainer.appendChild(userName);
-    messageContainer.appendChild(prompt);
+    avatarContainer.appendChild(userAvatar)
+    messageContainer.appendChild(userName)
+    messageContainer.appendChild(prompt)
 
-    promptContainer.appendChild(avatarContainer);
-    promptContainer.appendChild(messageContainer);
+    promptContainer.appendChild(avatarContainer)
+    promptContainer.appendChild(messageContainer)
 
-    this.shadow.querySelector('.chat').appendChild(promptContainer);
+    this.shadow.querySelector('.chat').appendChild(promptContainer)
   }
 
   createModelResponse = async event => {
 
-    const promptContainer = document.createElement('div');
-    const avatarContainer = document.createElement('div');
-    const messageContainer = document.createElement('div');
+    const promptContainer = document.createElement('div')
+    const avatarContainer = document.createElement('div')
+    const messageContainer = document.createElement('div')
 
-    const modelAvatar = document.createElement('img');
-    const modelName = document.createElement('h3');
-    const prompt = document.createElement('p');
-    const waitState = document.createElement('div');
+    const modelAvatar = document.createElement('img')
+    const modelName = document.createElement('h3')
+    const prompt = document.createElement('p')
+    const waitState = document.createElement('div')
 
-    promptContainer.classList.add('prompt');
-    avatarContainer.classList.add('avatar');
-    messageContainer.classList.add('message');
-    messageContainer.classList.add('model');
-    waitState.classList.add('state');
-    waitState.classList.add('active');
+    promptContainer.classList.add('prompt')
+    avatarContainer.classList.add('avatar')
+    messageContainer.classList.add('message')
+    messageContainer.classList.add('model')
+    waitState.classList.add('state')
+    waitState.classList.add('active')
 
-    modelAvatar.src = "images/user-avatar.png";
-    modelName.textContent = this.model;
+    modelAvatar.src = "images/user-avatar.png"
+    modelName.textContent = this.model
 
     prompt.appendChild(waitState);
-    avatarContainer.appendChild(modelAvatar);
-    messageContainer.appendChild(modelName);
-    messageContainer.appendChild(prompt);
+    avatarContainer.appendChild(modelAvatar)
+    messageContainer.appendChild(modelName)
+    messageContainer.appendChild(prompt)
 
-    promptContainer.appendChild(messageContainer);
-    promptContainer.appendChild(avatarContainer);
-    promptContainer.appendChild(messageContainer);
+    promptContainer.appendChild(messageContainer)
+    promptContainer.appendChild(avatarContainer)
+    promptContainer.appendChild(messageContainer)
 
-    this.shadow.querySelector('.chat').appendChild(promptContainer);
+    this.shadow.querySelector('.chat').appendChild(promptContainer)
   }
 }
 
-customElements.define('chat-component', Chat);
+customElements.define('chat-component', Chat)

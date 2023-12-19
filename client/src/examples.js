@@ -24,10 +24,9 @@ class Examples extends HTMLElement {
   }
 
   async loadData () {
-    const url = `${API_URL}/client/examples`
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`${API_URL}/client/examples`, {
         headers: {
           // Authorization: 'Bearer ' + sessionStorage.getItem('accessToken')
         }

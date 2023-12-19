@@ -183,4 +183,4 @@ class Models extends HTMLElement {
   }
 }
 
-customElements.define('assistants-component', Models);
+customElements.define('assistants-component', Models)

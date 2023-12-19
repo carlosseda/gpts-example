@@ -14,10 +14,8 @@ class History extends HTMLElement {
 
   async loadData () {
       
-    const url = `${API_URL}/client/chats`
-
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`${API_URL}/client/chats`, {
         headers: {
           // Authorization: 'Bearer ' + sessionStorage.getItem('accessToken')
         }

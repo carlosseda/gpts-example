@@ -179,8 +179,8 @@ class Aside extends HTMLElement {
   }
 
   toggleAside = () => {
-    this.shadow.querySelector('.toggle-aside-button').classList.toggle('active');
-    this.shadow.querySelector('aside').classList.toggle('active');
+    this.shadow.querySelector('.toggle-aside-button').classList.toggle('active')
+    this.shadow.querySelector('aside').classList.toggle('active')
 
     const activeTooltip = this.shadow.querySelector('.toggle-aside-button .tooltiptext.active')
     const hiddenTooltip = this.shadow.querySelector('.toggle-aside-button .tooltiptext:not(.active)')
@@ -189,4 +189,4 @@ class Aside extends HTMLElement {
   }
 }
 
-customElements.define('aside-component', Aside);
+customElements.define('aside-component', Aside)

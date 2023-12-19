@@ -66,4 +66,4 @@ class User extends HTMLElement {
   }
 }
 
-customElements.define('user-component', User);
+customElements.define('user-component', User)

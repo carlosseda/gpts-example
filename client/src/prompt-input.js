@@ -5,7 +5,7 @@ class PromptInput extends HTMLElement {
   constructor () {
     super()
     this.shadow = this.attachShadow({ mode: 'open' })
-    this.chatId = null;
+    this.chatId = null
 
     document.addEventListener('newChat', this.handleNewChat.bind(this))
     document.addEventListener('responseState', this.handleResponseState.bind(this))
@@ -22,22 +22,22 @@ class PromptInput extends HTMLElement {
   attributeChangedCallback (name, oldValue, newValue) {
     if(name === 'response-state'){
       if(newValue === "true"){
-        this.shadow.querySelector('.send-button').classList.remove('visible');
-        this.shadow.querySelector('.stop-button').classList.add('visible');
+        this.shadow.querySelector('.send-button').classList.remove('visible')
+        this.shadow.querySelector('.stop-button').classList.add('visible')
       }else{
-        this.shadow.querySelector('.send-button').classList.add('visible');
-        this.shadow.querySelector('.stop-button').classList.remove('visible');
+        this.shadow.querySelector('.send-button').classList.add('visible')
+        this.shadow.querySelector('.stop-button').classList.remove('visible')
       }
     }
   }
 
   handleNewChat = event => {
-    this.chatId = null;
-    this.render();
+    this.chatId = null
+    this.render()
   }
 
   handleResponseState = event => {
-    this.setAttribute('response-state', event.detail.responseState);
+    this.setAttribute('response-state', event.detail.responseState)
   }
 
   render () {
@@ -261,18 +261,19 @@ class PromptInput extends HTMLElement {
       }
 
       this.shadow.querySelector('.send-button').classList.add('active')
-      this.shadow.querySelector('.send-button button').disabled = false;
+      this.shadow.querySelector('.send-button button').disabled = false
 
     } else {
       
       this.shadow.querySelector('.send-button').classList.remove('active')
-      this.shadow.querySelector('.send-button button').disabled = true;
+      this.shadow.querySelector('.send-button button').disabled = true
     }
   }
 
   async sendPrompt (prompt) {
 
-    this.render();
+    this.render()
+    this.setAttribute('response-state', "true")
 
     if(this.chatId === null){
       document.dispatchEvent(new CustomEvent('startChat'))
@@ -283,8 +284,6 @@ class PromptInput extends HTMLElement {
         prompt: prompt,
       }
     }))
-
-    const url = `${API_URL}/client/prompts`
    
     const data = {
       chatId: this.chatId,
@@ -295,7 +294,7 @@ class PromptInput extends HTMLElement {
     }
 
     try {
-      const result = await fetch(url, {
+      const result = await fetch(`${API_URL}/client/prompts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
